@@ -47,6 +47,15 @@ userSchema.methods.addToCart = function(product) {
 	return this.save();
 };
 
+userSchema.methods.removeFromCart = function(id) {
+	const updatedCartItems = this.cart.items.filter(item => {
+		return item.productId.toString() !== id.toString();
+	});
+	this.cart.items = updatedCartItems;
+	// execute save on the userSchema, hence this user instence
+	return this.save();
+};
+
 module.exports = mongoose.model("User", userSchema);
 // const mongodb = require("mongodb");
 
