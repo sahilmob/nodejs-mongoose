@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 const errorController = require("./controllers/error");
-// const User = require("./models/user");
+const User = require("./models/user");
 
 const app = express();
 
@@ -18,15 +18,14 @@ const shopRoutes = require("./routes/shop");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// app.use((req, res, next) => {
-// 	User.findById("5be5cfb260e25b422c5146cb")
-// 		.then(user => {
-// 			//We instantiated user to get access to the instence methods, sience what we get form findById is only user data but not methods
-// 			req.user = new User(user.username, user.email, user.cart, user._id);
-// 			next();
-// 		})
-// 		.catch(err => console.log(err));
-// });
+app.use((req, res, next) => {
+	User.findById("5be6dc02acfe2821a87bd7e2")
+		.then(user => {
+			req.user = user;
+			next();
+		})
+		.catch(err => console.log(err));
+});
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
@@ -39,6 +38,18 @@ mongoose
 		{ useNewUrlParser: true }
 	)
 	.then(result => {
+		User.findOne().then(user => {
+			if (!user) {
+				const user = new User({
+					name: "Sahil",
+					email: "text@test.com",
+					cart: {
+						items: []
+					}
+				});
+				user.save();
+			}
+		});
 		app.listen(3000);
 	})
 	.catch(err => {
