@@ -2,9 +2,9 @@ const path = require("path");
 
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 const errorController = require("./controllers/error");
-const mongoConnet = require("./util/database").mongoConnect;
 const User = require("./models/user");
 
 const app = express();
@@ -33,6 +33,14 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-mongoConnet(() => {
-	app.listen(3000);
-});
+mongoose
+	.connect(
+		"mongodb+srv://sahil:EgmguZoNUpemFdsF@cluster0-ax6dp.mongodb.net/shop?retryWrites=true",
+		{ useNewUrlParser: true }
+	)
+	.then(result => {
+		app.listen(3000);
+	})
+	.catch(err => {
+		console.log(err);
+	});
